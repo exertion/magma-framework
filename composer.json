@@ -1,0 +1,22 @@
+{
+    "name": "exertion/magma-framework",
+    "description": "The Magma WordPress Plugin Framework.",
+    "license": "MIT",
+    "support": {
+        "source": "https://github.com/exertion/magma",
+        "docs": "https://magma.exertion.co"
+    },
+    "require": {
+        "php": "^7.2"
+    },
+    "autoload": {
+        "psr-4": {
+            "Bright\\": "src/Bright"
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "config": {
+        "sort-packages": true
+    }
+}
