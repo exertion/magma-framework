@@ -10,10 +10,11 @@
         "php": "^7.2"
     },
     "autoload": {
-        "psr-4": {
-            "Spotlight\\": "src/Spotlight/"
+        "psr-0": {
+            "Spotlight": "src/"
         }
     },
+    "minimum-stability": "dev",
     "prefer-stable": true,
     "config": {
         "sort-packages": true
