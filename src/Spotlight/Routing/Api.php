@@ -35,9 +35,14 @@ class Api
             register_rest_route( PLUGIN_NAME , $uri, [
                 'methods' => $method,
                 'callback' => function() use ($action) {
-                    $function = explode('@', $action);
-                    $controller = "\App\Http\Controllers\\" . $function[0];
-                    echo json_encode(call_user_func([ new $controller, $function[1] ]));
+                    if (is_object($action)) {
+                        $function = $action;
+                    } else {
+                        $action = explode('@', $action);
+                        $controller = "\App\Http\Controllers\\" . $action[0];
+                        $function = [ new $controller, $action[1] ];
+                    }
+                    echo json_encode(call_user_func( $function ));
                 },
             ]);
         });
