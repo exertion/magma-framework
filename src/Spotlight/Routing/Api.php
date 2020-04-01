@@ -43,6 +43,7 @@ class Api
                         $function = [ new $controller, $action[1] ];
                     }
                     echo json_encode(call_user_func( $function ));
+                    die();
                 },
             ]);
         });
