@@ -18,7 +18,7 @@ class Settings
 
     public function __construct($enabled)
     {
-        self::$prefix = str_replace('-', '_', Helper::slugify(config('name'))); // Build prefix from plugin name.
+        self::$prefix = str_replace('-', '_', Helper::slugify(config('app.name'))); // Build prefix from plugin name.
         self::$enabled = $enabled;
     }
 
@@ -36,7 +36,7 @@ class Settings
     	$menu['menu_title'] = 'Settings Panel';
     	$menu['capability'] = 'manage_options';
 
-    	$menu['page_title'] = __( config('name').' Settings' );
+    	$menu['page_title'] = __( config('app.name').' Settings' );
     	$menu['menu_title'] = $menu['page_title'];
 
     	return $menu;
@@ -119,14 +119,14 @@ class Settings
     {
         if (self::$enabled) {
             $panel = new OptionsKit(self::$prefix);
-            $panel->set_page_title( __( config('name').' Settings' ) );
+            $panel->set_page_title( __( config('app.name').' Settings' ) );
 
             add_filter( self::$prefix.'_menu', [ self::class, 'setupMenu' ] );
             add_filter( self::$prefix.'_settings_tabs', [ self::class, 'registerSettingsTabs' ] );
             add_filter( self::$prefix.'_registered_settings_sections', [ self::class, 'registerSettingsSubsections' ] );
             add_filter( self::$prefix.'_registered_settings', [ self::class, 'registerSettings' ] );
 
-            add_filter('plugin_action_links_'.config('plugin_basename'), [self::class, 'appendPluginSettings'] ); // Add settings link beside plugins list.
+            add_filter('plugin_action_links_'.config('magma.plugin_basename'), [self::class, 'appendPluginSettings'] ); // Add settings link beside plugins list.
         }
     }
 }
