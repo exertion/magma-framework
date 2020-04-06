@@ -2,6 +2,8 @@
 
 namespace Spotlight\Routing;
 
+use Spotlight\Helpers\Helper;
+
 class Api
 {
     public static function get($uri, $action)
@@ -32,7 +34,7 @@ class Api
     public static function registerRoute($method, $uri, $action)
     {
         add_action('rest_api_init', function () use ($method, $uri, $action) {
-            register_rest_route( PLUGIN_NAME , $uri, [
+            register_rest_route( Helper::slugify(config('app.name')) , $uri, [
                 'methods' => $method,
                 'callback' => function() use ($action) {
                     if (is_object($action)) {
