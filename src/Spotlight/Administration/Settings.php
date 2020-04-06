@@ -9,6 +9,7 @@ class Settings
 {
     protected static $enabled;
     protected static $tabs = [];
+    protected static $prefix;
 
     // used for chaining.
     public static $currentTab;
@@ -17,6 +18,7 @@ class Settings
 
     public function __construct($enabled)
     {
+        self::$prefix = str_replace('-', '_', Helper::slugify(config('name'))); // Build prefix from plugin name.
         self::$enabled = $enabled;
     }
 
@@ -27,14 +29,14 @@ class Settings
      *
      * @return array
      */
-    public function igp_setup_menu()
+    public function setupMenu()
     {
     	// These defaults can be customized
     	$menu['parent'] = 'options-general.php';
     	$menu['menu_title'] = 'Settings Panel';
     	$menu['capability'] = 'manage_options';
 
-    	$menu['page_title'] = __( 'My Plugin Settings' );
+    	$menu['page_title'] = __( config('name').' Settings' );
     	$menu['menu_title'] = $menu['page_title'];
 
     	return $menu;
@@ -47,7 +49,7 @@ class Settings
      *
      * @return array
      */
-    public function igp_register_settings_tabs( )
+    public function registerSettingsTabs( )
     {
         return self::$tabs;
     }
@@ -59,7 +61,7 @@ class Settings
      *
      * @return array
      */
-    public function igp_register_settings_subsections( $subsections )
+    public function registerSettingsSubsections( $subsections )
     {
     	return $subsections;
     }
@@ -71,11 +73,19 @@ class Settings
      *
      * @return array
      */
-    public function igp_register_settings( $settings )
+    public function registerSettings( $settings )
     {
     	return self::$options;
     }
 
+    /**
+    *   ADD LINK TO SETTINGS PAGE FROM PLUGINS PAGE (BESIDES THIS PLUGIN)
+    */
+    public function appendPluginSettings($links) {
+        $settings_link = "<a href='options-general.php?page=". self::$prefix ."-settings'>Settings</a>";
+        array_unshift($links, $settings_link);
+        return $links;
+    }
 
     public static function tab($name, $slug = null)
     {
@@ -108,14 +118,15 @@ class Settings
     public static function init()
     {
         if (self::$enabled) {
-            $prefix = 'igp';
-            $panel = new OptionsKit($prefix);
-            $panel->set_page_title( __( 'My Plugin Settings' ) );
+            $panel = new OptionsKit(self::$prefix);
+            $panel->set_page_title( __( config('name').' Settings' ) );
 
-            add_filter( 'igp_menu', [ self::class, 'igp_setup_menu' ] );
-            add_filter( 'igp_settings_tabs', [ self::class, 'igp_register_settings_tabs' ] );
-            add_filter( 'igp_registered_settings_sections', [ self::class, 'igp_register_settings_subsections' ] );
-            add_filter( 'igp_registered_settings', [ self::class, 'igp_register_settings' ] );
+            add_filter( self::$prefix.'_menu', [ self::class, 'setupMenu' ] );
+            add_filter( self::$prefix.'_settings_tabs', [ self::class, 'registerSettingsTabs' ] );
+            add_filter( self::$prefix.'_registered_settings_sections', [ self::class, 'registerSettingsSubsections' ] );
+            add_filter( self::$prefix.'_registered_settings', [ self::class, 'registerSettings' ] );
+
+            add_filter('plugin_action_links_'.config('plugin_basename'), [self::class, 'appendPluginSettings'] ); // Add settings link beside plugins list.
         }
     }
 }
